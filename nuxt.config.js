@@ -25,7 +25,7 @@ export default defineNuxtConfig({
     OPENAI_API_KEY: process.env.OPENAI_API_KEY, 
   },
   chatgpt: {
-    apiKey: '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'
+    apiKey: process.env.OPENAI_API_KEY
   },
   tailwindcss: {
     configPath: 'tailwind.config.js',

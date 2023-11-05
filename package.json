@@ -41,5 +41,8 @@
     "@tiptap/suggestion": "^2.1.12",
     "@tiptap/vue-3": "^2.1.12",
     "slug": "^8.2.3"
+  },
+  "engines": {
+    "node": ">=16.14.0"
   }
 }
