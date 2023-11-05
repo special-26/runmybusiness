@@ -76,10 +76,10 @@
     const realestate = ref([
         { name: "Dashboard", icon: 'streamline:interface-dashboard-layout-circle-app-application-dashboard-home-layout-circle', route: 'dashboard.index', url: '/dashboard'},
         { name: "Property", icon: 'ph:house-bold', route: 'listing.index', url: '/property'},
-        { name: "Blog", icon: 'solar:document-text-linear', route: 'blog.index', url: '/blog'},
-        { name: "Categories", icon: 'ic:twotone-category', route: 'category.index', url: '/category'},
-        { name: "My Clients", icon: 'solar:users-group-rounded-linear', route: 'client.index', url: '/client'},
-        { name: "Contact Leads", icon: 'mdi:message-reply-text-outline', route: 'contact.index', url: '/contact'},
+        // { name: "Blog", icon: 'solar:document-text-linear', route: 'blog.index', url: '/blog'},
+        // { name: "Categories", icon: 'ic:twotone-category', route: 'category.index', url: '/category'},
+        // { name: "My Clients", icon: 'solar:users-group-rounded-linear', route: 'client.index', url: '/client'},
+        { name: "Contact Leads", icon: 'mdi:message-reply-text-outline', route: 'contact.index', url: '/contact-form'},
     ])
 
     // For Listing Serviec and Product

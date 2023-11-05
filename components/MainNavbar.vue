@@ -6,7 +6,7 @@
             </NuxtLink>
             <div class="hidden md:flex items-center gap-6 text-gray-900 text-sm">
                 <NuxtLink to="/pricing">Pricing</NuxtLink>
-                <NuxtLink to="/contact">Contact</NuxtLink>
+                <NuxtLink to="/">Contact</NuxtLink>
             </div>
             
             <AuthButton />
