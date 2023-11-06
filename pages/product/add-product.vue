@@ -7,7 +7,7 @@
             </NuxtLink>
                 <button 
                 class="bg-gray-800 text-white py-2 px-5 rounded-lg text-sm"
-                type="submit" @click="addListing">
+                type="submit" @click="addProduct">
                     {{ loading ? 'Adding...' : 'Add Product' }}
                 </button>
         </header>
@@ -320,7 +320,7 @@
       .from('product_category')
       .select('*')
 
-    const addListing = async () => {
+    const addProduct = async () => {
         slugGenerator();
         loading.value = true;
         try {

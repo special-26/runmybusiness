@@ -1,8 +1,7 @@
 <template>
 
   <div class="overflow-hidden dark:bg-slate-900 dark:border-gray-700 p-12">
-     Dashboard
-     {{ profile.website }}
+     
   </div>
 
   <!-- new setup -->

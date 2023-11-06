@@ -7,7 +7,7 @@
                     class="font-semibold text-zinc-700 hover:text-gray-900 dark:hover:text-white"
                     >Dashboard</NuxtLink
                 >
-                <button class="border px-4 rounded-lg ml-4 py-1.5">Logout</button>
+                <button class="border px-4 rounded-lg ml-4 py-1.5" @click="logout">Logout</button>
             </template>
 
             <template v-else>
@@ -29,8 +29,15 @@
 
 <script setup>
     const user = useSupabaseUser()
+    const supabase = useSupabaseClient()
+    const router = useRouter()
 
     const website_type = ref('listing')
+
+    const logout = async () => {
+        const { error } = await supabase.auth.signOut()
+        router.push({ path: "/" });
+    }
 </script>
 
 <style scoped>

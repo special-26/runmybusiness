@@ -1,6 +1,7 @@
 <template>
-  <div class="text-zinc-900 h-screen flex items-center justify-center font-indie">
-      <section class="w-full max-w-sm mx-auto">
+    <div class="text-zinc-900 h-screen flex items-center justify-center font-indie relative">
+        <img src="/images/login-bg.jpeg" class="absolute top-0 left-0 w-full h-full object-cover grayscale opacity-25" />
+        <section class="w-full max-w-sm bg-white/50 backdrop-blur rounded-xl p-10">
           <h2 class="text-3xl font-bold mb-5 text-center">
               Create new account!
           </h2>
@@ -14,10 +15,14 @@
                   <Icon name="fa6-solid:wand-magic-sparkles" v-else class="group-hover:scale-125 transition duration-700 ease-in-out" />
               </button>
               <div>{{ successMsg }}</div>
-              <NuxtLink to="/auth/login">Login</NuxtLink>
+
+                <div class="text-center text-sm ">
+                    Create new account
+                    <NuxtLink to="/auth/login" class="font-bold underline">Login</NuxtLink>
+                </div>
           </form>
-      </section>
-  </div>
+        </section>
+    </div>
 </template>
 
 <script setup>
