@@ -40,6 +40,7 @@
     "@tiptap/starter-kit": "^2.1.12",
     "@tiptap/suggestion": "^2.1.12",
     "@tiptap/vue-3": "^2.1.12",
+    "@vercel/analytics": "^1.1.1",
     "slug": "^8.2.3"
   },
   "engines": {

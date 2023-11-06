@@ -34,18 +34,17 @@
     const name = ref('vimal')
     
     const items = [
-        [{
-            label: 'Profile',
-            avatar: {
-                src: 'https://avatars.githubusercontent.com/u/739984?v=4'
+        [
+            {
+                label: 'Profile',
+                avatar: {
+                    src: 'https://avatars.githubusercontent.com/u/739984?v=4'
+                },
+                click: async () => {
+                    router.push({ path: "/profile" });
+                }    
             }
-        }], [{
-            label: 'Archive',
-            icon: 'i-heroicons-archive-box-20-solid'
-        }, {
-            label: 'Move',
-            icon: 'lightbulb-outline-rounded'
-        }], [{
+        ], [{
             label: 'Logout',
             icon: 'i-heroicons-arrow-left-on-rectangle',
             click: async () => {

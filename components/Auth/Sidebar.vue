@@ -5,7 +5,8 @@
         </NuxtLink>
 
         <div class="hr h-0.5 w-full bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-800 to-transparent"></div>
-        <div class="action flex flex-col text-gray-500 mt-8 dark:text-gray-500 font-inter text-sm px-4" v-if="website_type">
+
+        <div class="action flex flex-col text-gray-500 my-8 dark:text-gray-500 font-inter text-sm px-4" v-if="website_type">
 
             <!-- Sidebar for Product -->
             <template v-if="website_type === 'product'">
