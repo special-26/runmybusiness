@@ -114,6 +114,7 @@
         .select('id, name, email, message, phone, created_at')
         .order('id', { ascending: false })
         .range(startProduct.value, stopProduct.value)
+        .eq('user_id', user.value.id)
         .then((res) => {
             const data = res.data
             if(data === null){

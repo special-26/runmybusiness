@@ -32,22 +32,6 @@
                                         Add Category
                                     </button>
                                 </div>
-
-                                <!-- Add New Category -->
-                                <UModal v-model="isOpen">
-                                  <div class="card">
-                                    <div class="card-header flex items-center justify-between p-4 border-b text-sm">
-                                        New Category
-                                    </div>
-                                    <div class="card-body px-4 py-6 space-y-6">
-                                        <input type="text" class="p-3 rounded-xl border w-full focus:outline-none shadow-inner" placeholder="Category title" v-model="title">
-                                        <button class="w-full rounded-xl bg-gray-900 text-white p-3 flex items-center justify-center gap-2" @click="addCategory">
-                                            <span>{{ loading ? 'adding...' : 'Add' }}</span>
-                                            <Icon v-if="loading" name="line-md:loading-twotone-loop" class="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                  </div>
-                                </UModal>
                             </div>
 
                         </div>
@@ -77,19 +61,63 @@
                         <!-- End Table -->
 
                         <!-- Edit Category -->
-                        <UModal v-model="editModal">
+                        <UModal v-model="editModal" prevent-close>
                           <div class="card">
                             <div class="card-header flex items-center justify-between p-4 border-b text-sm">
                                 Edit Category
+                                <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="editModal = false, title=''" />
                             </div>
-                            <div class="card-body px-4 py-6 space-y-6">
-                                <input type="text" class="p-3 rounded-xl border w-full focus:outline-none shadow-inner" placeholder="Category title" v-model="title">
+                            <div class="card-body px-6 py-6">
+                                <!-- Category Title -->
+                                <h3 class="text-sm font-semibold">Category Title</h3>
+                                <input type="text" class="mb-5 p-3 rounded-xl border w-full focus:outline-none shadow-inner" placeholder="Category title" v-model="title">
+                                <!-- Category Description -->
+                                <label class="text-sm font-semibold">Category Description</label>
+                                <textarea name="description" rows="4" v-model="description" class="mb-5 p-3 rounded-xl border w-full focus:outline-none shadow-inner" placeholder="Category description"></textarea>
+                                <!-- Category Image -->
+                                <h3 class="text-sm font-semibold">Category Image</h3>
+                                <img :src="image" class="w-32 mx-auto mb-2 object-contain rounded-xl">
+                                <label for="categoryImage">
+                                    <div class="mb-5 p-3 rounded-xl border w-full focus:outline-none shadow-inner cursor-pointer flex items-center gap-2 text-sm">
+                                        <Icon name="ic:outline-add-photo-alternate" class="h-5 w-5" />
+                                        Upload Image
+                                    </div>
+                                    <input type="file" id="categoryImage" class="categoryImage hidden" @input.prevent="updateCategoryImage"  />
+                                </label>
+
+                                <!-- Save Button -->
                                 <button class="w-full rounded-xl bg-gray-900 text-white p-3 flex items-center justify-center gap-2" @click="updateCategory">
                                     <span>{{ loading ? 'updating...' : 'Update' }}</span>
                                     <Icon v-if="loading" name="line-md:loading-twotone-loop" class="w-5 h-5" />
                                 </button>
                             </div>
                           </div>
+                        </UModal>
+
+                        <!-- Add New Category -->
+                        <UModal v-model="isOpen" prevent-close>
+                            <div class="card" size="sm">
+                                <div class="card-header flex items-center justify-between p-4 border-b text-sm">
+                                    New Category
+                                    <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="isOpen = false, title=''" />
+                                </div>
+                                <div class="card-body px-6 py-4">
+                                    <!-- Category Title -->
+                                    <label class="text-sm font-semibold">Category Title</label>
+                                    <input type="text" class="mb-5 p-3 rounded-xl border w-full focus:outline-none shadow-inner" placeholder="Category title" v-model="title">
+                                    <!-- Category Description -->
+                                    <label class="text-sm font-semibold">Category Description</label>
+                                    <textarea name="description" rows="4" v-model="description" class="mb-5 p-3 rounded-xl border w-full focus:outline-none shadow-inner" placeholder="Category description"></textarea>
+                                    <!-- Category Image -->
+                                    <label class="text-sm font-semibold">Category Image</label>
+                                    <UInput type="file" class="rounded-xl mt-2 mb-5" @input.prevent="categoryImage"  />
+                                    <!-- Save Button -->
+                                    <button class="w-full rounded-xl bg-gray-900 text-white p-3 flex items-center justify-center gap-2" @click="addCategory">
+                                        <span>{{ loading ? 'adding...' : 'Add' }}</span>
+                                        <Icon v-if="loading" name="line-md:loading-twotone-loop" class="w-5 h-5" />
+                                    </button>
+                                </div>
+                            </div>
                         </UModal>
 
                         <!-- Footer -->
@@ -142,6 +170,9 @@
 
     const categories = ref([])
     const title = ref('')
+    const image = ref('')
+    const description = ref('')
+
     const genSlug = ref('')
     const isOpen = ref(false)
     const editModal = ref(false)
@@ -161,12 +192,14 @@
             click: async () => {
                 let { data, error } = await supabase
                     .from('product_category')
-                    .select()
+                    .select('id, title, image, description')
                     .eq('id', row.id)
                     .single()
 
                 selectedCategory.value = data
                 title.value = selectedCategory.value.title
+                image.value = selectedCategory.value.image
+                description.value = selectedCategory.value.description
                 editModal.value = true
             }
         }],  
@@ -174,6 +207,14 @@
             label: 'Delete',
             icon: 'i-heroicons-trash-20-solid',
             click: async () => {
+                if (row.image) {
+                    let str = row.image.split('/');
+                    let result = str[str.length - 1];
+                    await supabase
+                        .storage
+                        .from('categories')
+                        .remove([result])
+                }
                 await supabase.from('product_category').delete().eq('id', row.id)
                 getCategory()
                 toast.add({ title: 'Category deleted' })
@@ -193,9 +234,10 @@
     const getAllCategory = async () => {
       supabase
         .from('product_category')
-        .select('id, title, created_at, slug')
+        .select('id, title, created_at, slug, image, description')
         .order('id', { ascending: false })
         .range(startProduct.value, stopProduct.value)
+        .eq('user_id', user.value.id)
         .then((res) => {
             const data = res.data
             if(data === null){
@@ -227,7 +269,7 @@
 
         supabase
             .from('product_category')
-            .select('id, title, created_at, slug')
+            .select('id, title, created_at, slug, image,description')
             .textSearch('title', searchString)
             .order('id', { ascending: false })
             .range(startProduct.value, stopProduct.value)
@@ -269,6 +311,8 @@
         .from('product_category')
         .update({ 
           title: title.value,
+          image: image.value,
+          description: description.value,
           slug: slug(title.value)
         })
         .eq('id', selectedCategory.value.id)
@@ -277,6 +321,8 @@
         getCategory()
         editModal.value = false,
         title.value = '',
+        image.value = '',
+        description.value = '',
         toast.add({ title: 'Category updated' })
     }  
 
@@ -296,6 +342,64 @@
       .from('product_category')
       .select('*')
 
+    // categoryImage upload
+    const categoryImage = async (evt) => {
+        let file = evt.target.files[0];
+
+        try {
+            if(!file || file.length === 0) {
+                throw new Error("You must have at least one file to upload");
+            } else {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Math.random()}.${fileExt}`
+                const filePath = `${fileName}`
+
+                let {error: uploadError} = await supabase.storage.from('categories').upload(filePath, file)
+
+                if(uploadError) throw uploadError
+
+                const { data } = supabase.storage.from('categories').getPublicUrl(filePath)
+                image.value = data.publicUrl;
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            console.log('category image uploaded');
+        }
+    }
+    // Update updateCategoryImage
+    const updateCategoryImage = async (evt) => {
+        let file = evt.target.files[0];
+
+        try {
+            if(!file || file.length === 0) {
+                throw new Error("You must have at least one file to upload");
+            } else {
+                if (image.value) {
+                    let str = image.value.split('/');
+                    let result = str[str.length - 1];
+                    await supabase
+                        .storage
+                        .from('categories')
+                        .remove([result])
+                }
+
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Math.random()}.${fileExt}`
+                const filePath = `${fileName}`
+
+                let {error: uploadError} = await supabase.storage.from('categories').upload(filePath, file)
+
+                const { data } = supabase.storage.from('categories').getPublicUrl(filePath)
+                image.value = data.publicUrl;
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            console.log('category image uploaded');
+        }
+    }
+
     const addCategory = async () => {
       loading.value = true
       genSlug.value = slug(title.value)
@@ -305,7 +409,10 @@
         .insert([
           { 
             title: title.value, 
-            slug: genSlug.value 
+            image: image.value,
+            description: description.value,
+            slug: genSlug.value ,
+            user_id: user.value.id
           },
         ])
         .select()
@@ -313,6 +420,8 @@
       getCategory()
       loading.value = false
       title.value = ''
+      image.value = ''
+      description.value = ''
       isOpen.value = false
       toast.add({ title: 'Category added' })
     }

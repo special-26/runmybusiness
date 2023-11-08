@@ -5,22 +5,27 @@
       </header>
 
       <section class="p-6">
-        <div class="flex flex-col md:flex-row gap-6">
+        <div class="flex flex-col md:flex-row gap-6" v-if="profile">
             <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow rounded-3xl md:w-[50%] w-full">
                 <h6 class="mb-3">Plan & Billing</h6>
-                <div class="flex flex-col md:flex-row border justify-between border-gray-200 rounded-xl p-8 dark:border-gray-700 mb-4">
+                <div class="flex flex-col md:flex-row border justify-between border-gray-200 rounded-xl p-8 dark:border-gray-700 mb-4 relative">
                     <div>
                         <span class="text-sm text-gray-500">Plan</span>
-                        <h4 class="font-medium text-lg uppercase text-gray-800 dark:text-gray-200">{{ plan_name }}</h4>
+                        <h4 class="font-medium text-lg uppercase text-gray-800 dark:text-gray-200">{{ profile.pricings.plan_name }}</h4>
                     </div>
                     <div>
                         <span class="text-sm text-gray-500">Payment</span>
                         <div class="font-bold text-gray-800 dark:text-gray-200">
                             <span class="font-bold mr-1">₹</span>
-                            <span class="text-2xl">{{ billing_amount }}</span>
-                            <span class="text-sm">/{{ billing_tenor }}</span>
+                            <span class="text-2xl">
+                                <span class="line-through text-sm">{{ profile.pricings.price }}</span>
+                                <span>250</span>
+                            </span>
+                            <span class="text-sm">/{{ profile.pricings.plan_name }}</span>
                         </div>
                     </div>
+                    <!-- offer badge -->
+                    <span class="absolute -top-2 -right-2 bg-purple-400 rounded-lg text-xs px-3 py-1.5">75% Off</span>
                 </div>
 
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -45,16 +50,28 @@
                 </table>
             </div>
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow rounded-3xl md:w-[50%] w-full">
-                <h6 class="mb-5">Invoice History</h6>
-
-                <div class="flex gap-6 items-center border-t py-4" v-for="bill in invoices" :key="bill.id">
-                    <div class="w-[60%]">
-                        <div class="md:text-sm text-xs">{{ bill.invoice_id }}</div>
-                        <div class="text-xs text-zinc-400 dark:text-zinc-800">{{ $dayjs(bill.created_at).format('D MMM YYYY') }}</div>
+            <div class="w-full md:w-[50%] space-y-6">
+                <!-- Change Plan -->
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow rounded-3xl  w-full">
+                    <h6 class="mb-5">Change Plan</h6>
+                    <div class="flex gap-2 items-center">
+                        <USelect v-model="profile.pricing_id" :options="pricings" class="w-full" option-attribute="plan_name" value-attribute="id"  placeholder="Select Plan" />
+                        <button class="border px-5 py-1.5 rounded-lg text-sm hover:bg-zinc-800 hover:text-white" @click="updatePlan">Update</button>
                     </div>
-                    <div class="w-[20%] text-xs bg-red-50 border border-red-300 rounded-lg text-red-600 px-2 py-1 text-center">{{ bill.status }}</div>
-                    <a :href="bill.payment_link" target="_blank" class="text-xs md:text-sm w-[20%]">Pay now</a>
+                </div>
+
+                <!-- Invoices -->
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow rounded-3xl w-full">
+                    <h6 class="mb-5">Invoice History</h6>
+
+                    <div class="flex gap-6 items-center border-t py-4" v-for="bill in invoices" :key="bill.id">
+                        <div class="w-[60%]">
+                            <div class="md:text-sm text-xs">{{ bill.invoice_id }}</div>
+                            <div class="text-xs text-zinc-400 dark:text-zinc-800">{{ $dayjs(bill.created_at).format('D MMM YYYY') }}</div>
+                        </div>
+                        <div class="w-[20%] text-xs bg-red-50 border border-red-300 rounded-lg text-red-600 px-2 py-1 text-center">{{ bill.status }}</div>
+                        <a :href="bill.payment_link" target="_blank" class="text-xs md:text-sm w-[20%]">Pay now</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -64,34 +81,65 @@
 </template>
 
 <script setup>
-  definePageMeta({
-    colorMode: 'light',
-    middleware: 'auth',
-    layout: 'dashboard'
-  })
+    definePageMeta({
+        colorMode: 'light',
+        middleware: 'auth',
+        layout: 'dashboard'
+    })
 
-  const user = useSupabaseUser()
-  const supabase = useSupabaseClient()
-  const toast = useToast()
+    const user = useSupabaseUser()
+    const supabase = useSupabaseClient()
+    const toast = useToast()
 
-  const plan_name = ref('')
-  const billing_amount = ref('')
-  const billing_email = ref('')
-  const billing_address = ref('')
-  const billing_contact = ref('')
+    const plan_name = ref('')
+    const billing_amount = ref('')
+    const billing_email = ref('')
+    const billing_address = ref('')
+    const billing_contact = ref('')
 
-  let { data: invoices, error } = await supabase
-    .from('invoices')
-    .select('*')
-    .eq('user_id', user.value.id)
-    .order('id', { ascending: false })
+    const current_plan = ref()
+    const profile = ref()
 
-  // Fetch Profile
-  let { data: profile } = await supabase
-      .from('profiles')
-      .select('full_name, phone')
-      .eq('id', user.value.id)
-      .single()
+    let { data: pricings } = await supabase
+        .from('pricings')
+        .select('*')
+                
+    let { data: invoices, error } = await supabase
+        .from('invoices')
+        .select('*')
+        .eq('user_id', user.value.id)
+        .range(0, 5)
+        .order('id', { ascending: false })
+
+    // Fetch Profile
+    const fetchProfile = async () => {
+        await supabase
+            .from('profiles')
+            .select(`
+                full_name, phone, pricing_id, pricing_offer,
+                pricings(
+                    plan_name, price
+                )
+            `)
+            .eq('id', user.value.id)
+            .single()
+            .then((res) => {
+                profile.value = res.data
+            })
+    }
+    fetchProfile()
+
+    const updatePlan = async () => {
+        await supabase
+            .from('profiles')
+            .update({ 
+                pricing_id: profile.value.pricing_id,
+            })
+            .eq('id', user.value.id)
+            .select()
+        fetchProfile()
+        toast.add({ title: 'Plan Updated' })
+    }
 
 </script>
 

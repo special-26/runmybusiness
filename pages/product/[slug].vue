@@ -21,10 +21,10 @@
                   <p class="text-sm text-gray-500 dark:text-gray-300">Categories</p>
               </div>
               <div class="md:w-[70%] rounded-xl md:shadow flex-col flex p-3 w-full">
-                  <div class="relative">
+                  <div class="relative" v-if="categories">
                       <USelectMenu v-model="product.product_category" :options="categories" option-attribute="title" searchable searchable-placeholder="Search a category..." size="xl" variant="none" placeholder="Select  category">
                           <template #label>
-                              <span v-if="product">{{ product.product_category.title }}</span>
+                              <span v-if="product.product_category">{{ product.product_category.title }}</span>
                           </template>
                       </USelectMenu>
                   </div>
@@ -57,11 +57,16 @@
                   <!-- Price and property type -->
                   <section class="p-6">
                       <div class="grid grid-cols-2 gap-6">
-                              <!-- Price -->
-                              <div class="relative">
-                                  <label class="">Price</label>
-                                  <input  placeholder="Price" class="w-full p-3 border focus:outline-gray-700 rounded-xl" v-model="product.price" />
-                              </div>
+                                <!-- Price -->
+                                <div class="relative">
+                                    <label class="">Price</label>
+                                    <div class="input-group relative overflow-hidden rounded-xl">
+                                        <input  placeholder="Price" class="w-full rounded-xl p-3 pl-8 border  focus:outline-gray-700" v-model="product.price" />
+                                        <span class="absolute left-0 top-0 bottom-0 pl-3 flex items-center justify-center">
+                                            <Icon name="ic:outline-currency-rupee" class="text-zinc-600 h-4 w-4" />
+                                        </span>
+                                    </div>
+                                </div>
                               <!-- Product Dimension -->
                               <div class="relative">
                                   <label class="">Product Dimensions</label>
@@ -107,7 +112,7 @@
                   <!-- uploaded image preview -->
                   <div class="grid grid-cols-4 gap-4 p-6">
                       <figure class="w-full relative overflow-hidden" v-for="(image, index) in images" :key="index">
-                          <img :src="image" :alt="title" class="border w-full h-36 object-cover rounded-t-xl" />
+                          <img :src="image" :alt="product.title" class="border w-full h-36 object-cover rounded-t-xl" />
                           <div class="flex items-center w-full bg-zinc-900 text-white py-1 border rounded-b-lg">
                               <button @click="setAsThumbnail(index, image)" class="text-xs flex items-center justify-center w-full border-r">
                                   <Icon name="material-symbols:star-rounded" 

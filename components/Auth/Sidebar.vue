@@ -36,7 +36,7 @@
                         buttonIcon w-10 h-10 
                         flex items-center justify-center group-hover:text-gray-800 dark:group-hover:text-gray-400 text-gray-400
                     ">
-                        <Icon :name="link.icon" />
+                        <Icon :name="link.icon" class="h-4 w-4" />
                     </button>
                     {{ link.name }}
                 </NuxtLink>
@@ -114,7 +114,7 @@
     const product = ref([
         { name: "Dashboard", icon: 'streamline:interface-dashboard-layout-circle-app-application-dashboard-home-layout-circle', route: 'dashboard.index', url: '/dashboard'},
         { name: "Products", icon: 'ic:sharp-format-list-bulleted', url: '/product'},
-        { name: "Add Product", icon: 'ic:sharp-format-list-bulleted', url: '/product/add-product'},
+        { name: "Add Product", icon: 'gridicons:create', url: '/product/add-product'},
         { name: "Product Category", icon: 'ic:twotone-category', url: '/product/category'},
         // { name: "Blog", icon: 'solar:document-text-linear', url: '/blog'},
         // { name: "My Clients", icon: 'solar:users-group-rounded-linear', url: '/client'},

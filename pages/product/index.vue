@@ -185,6 +185,7 @@
             `)
             .order('id', { ascending: false })
             .range(startProduct.value, stopProduct.value)
+            .eq('user_id', user.value.id)
             .then((res) => {
                 const data = res.data
                 if(data === null){
@@ -198,6 +199,7 @@
         supabase
             .from('products')
             .select('*', { count: 'exact', head: true})
+            .eq('user_id', user.value.id)
             .then((res) => {
                 totalNumProducts.value = res.count
             })
@@ -219,6 +221,7 @@
             .select('id, title, slug, created_at, images')
             .textSearch('title', searchString)
             .order('id', { ascending: false })
+            .eq('user_id', user.value.id)
             .range(startProduct.value, stopProduct.value)
             .then((res) => {
                 const data = res.data
@@ -233,6 +236,7 @@
         supabase
             .from('products')
             .select('*', { count: 'exact', head: true})
+            .eq('user_id', user.value.id)
             .textSearch('title', searchString)
             .then((res) => {
                 totalNumProducts.value = res.count
@@ -250,6 +254,7 @@
                 )
             `)
             .eq('category_id', category.value.id)
+            .eq('user_id', user.value.id)
             .order('id', { ascending: false })
             .range(startProduct.value, stopProduct.value)
             .then((res) => {
@@ -266,6 +271,7 @@
             .from('products')
             .select('*', { count: 'exact', head: true})
             .eq('category_id', category.value.id)
+            .eq('user_id', user.value.id)
             .then((res) => {
                 totalNumProducts.value = res.count
             })
