@@ -15,13 +15,14 @@
                     <Icon v-else name="solar:login-2-line-duotone" class="w-5 h-5" />
                 </button>
             </form>
-            <div>{{ errorMsg }}</div>
-
+            
             <div class="text-center mt-6 text-sm ">
                 Create new account
                 <NuxtLink to="/auth/register" class="font-bold underline">Register</NuxtLink>
             </div>
         </section>
+
+        <div class="fixed top-0 bg-pink-600 text-white px-5 py-1 text-sm rounded-b-lg shadow-xl" v-if="errorMsg">{{ errorMsg }}</div>
   </div>
 </template>
 
@@ -34,8 +35,8 @@
         layout: 'empty',
     })
 
-  const email = ref('me@vimalbharti.com');
-  const password = ref('password');
+  const email = ref('');
+  const password = ref('');
   const errorMsg = ref(null)
 
   const loading = ref(false)
@@ -52,6 +53,7 @@
           loading.value = false;
       } catch (error) {
           errorMsg.value = error.message
+          loading.value = false;
       }
   }
 </script>

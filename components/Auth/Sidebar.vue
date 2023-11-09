@@ -47,7 +47,7 @@
 
         <div class="flex flex-col text-gray-500 dark:text-gray-500 font-inter text-sm px-4">
             <NuxtLink 
-                to="/profile/setting"
+                to="/profile/social-links"
                 class="flex items-center gap-2 px-2 py-1.5 group text-gray-500 hover:font-bold hover:text-gray-900 dark:hover:text-gray-300 rounded-2xl border border-transparent cursor-pointer"  
             >
                 <button class="
@@ -56,7 +56,7 @@
                 ">
                     <Icon name="material-symbols:settings-outline-rounded" class="w-5 h-5" />
                 </button>
-                Setting
+                Social Links
             </NuxtLink>
             <NuxtLink 
                 to="/profile"
@@ -72,7 +72,7 @@
             </NuxtLink>
         </div>
         
-        <section class="p-3 mt-auto">
+        <!-- <section class="p-3 mt-auto">
             <div 
                 class="bg-white dark:bg-gray-950 border border-dashed rounded-lg p-4"
             >
@@ -80,7 +80,7 @@
                         Your email address is unverified.
                     </p>
             </div>
-        </section>
+        </section> -->
 
     </aside>
 </template>
