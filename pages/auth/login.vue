@@ -20,6 +20,11 @@
                 Create new account
                 <NuxtLink to="/auth/register" class="font-bold underline">Register</NuxtLink>
             </div>
+
+            <NuxtLink to="/" class="text-xs mt-5 flex items-center gap-2 justify-center">
+                <Icon name="material-symbols:keyboard-backspace-rounded" />
+                home
+            </NuxtLink>
         </section>
 
         <div class="fixed top-0 bg-pink-600 text-white px-5 py-1 text-sm rounded-b-lg shadow-xl" v-if="errorMsg">{{ errorMsg }}</div>

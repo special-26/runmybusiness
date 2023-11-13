@@ -7,7 +7,6 @@
             <NuxtLink 
                 to="/"
                 class="flex items-center gap-2 border px-4 py-1 rounded-lg text-gray-700 dark:text-gray-200 dark:border-gray-800"
-        
             >
                 <Icon name="solar:programming-broken" class="w-4 h-4" />
                 api
@@ -17,9 +16,10 @@
 
             <!-- Settings Dropdown -->
 
-            <UDropdown :items="items" :popper="{ placement: 'bottom-start' }">
-                <UButton color="white" v-if="user" :label="name" trailing-icon="i-heroicons-chevron-down-20-solid" />
-            </UDropdown>
+            <button class="flex items-center gap-1 border px-3 py-1 rounded-lg text-gray-700 dark:text-gray-200 dark:border-gray-800 hover:bg-zinc-50" @click="logout">
+                <Icon name="ri:logout-circle-line" />
+                Logout
+            </button>
 
         </div>
     </nav>
@@ -31,7 +31,7 @@
     const router = useRouter();
 
     const loading = ref(false)
-    const name = ref('vimal')
+    const email = ref(user.value.email)
     
     const items = [
         [
@@ -53,6 +53,11 @@
             }
         }]
     ]
+
+    const logout = async () => {
+        const { error } = await supabase.auth.signOut()
+        router.push({ path: "/" });
+    }
 
 </script>
 

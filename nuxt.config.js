@@ -10,6 +10,7 @@ export default defineNuxtConfig({
       position: 'top-0 right-0'
     }
   },
+  ssr: false,
   modules: [
     "@nuxt/ui",
     "@nuxt/image",

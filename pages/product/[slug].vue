@@ -37,14 +37,35 @@
                   <h5 class="">Product Headings</h5>
                   <p class="text-sm text-gray-500 dark:text-gray-300">Title and Short description</p>
               </div>
-              <div class="md:w-[70%] rounded-xl md:shadow flex-col flex gap-6 md:p-6 w-full">
-                  <div class="relative">
+              <div class="md:w-[70%] rounded-xl md:shadow flex-col flex gap-6 w-full">
+                  <div class="relative p-6 space-y-5">
                       <input placeholder="Project Title" class="w-full p-3 border focus:outline-gray-700 rounded-xl" v-model="product.title" />
-                  </div>
-                  <div class="relative">
                       <textarea rows="5" placeholder="Short Description" class="w-full p-3 border focus:outline-gray-700 rounded-xl" v-model="product.short_description"></textarea>
                   </div>
+                  <!-- Bullet Points -->
+                  <section class="w-full border-t p-6">
+                        <div class="relative">
+                            <div class="flex items-center justify-between w-full">
+                                <h3 class="flex items-center gap-1">
+                                    <Icon name="tdesign:bulletpoint" />
+                                    <label class="">Bullets Points</label>
+                                </h3>
+                                <!-- <button class="py-1.5 px-2 border text-xs rounded-lg text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50" @click="addPoint">+ Add Point</button> -->
+                            </div>
+                            <div v-for="(point, index) in product.points" :key="index" class="mb-2 flex items-center gap-1 mt-4">
+                                <input placeholder="New Point" class="w-full px-3 py-2 border focus:outline-gray-700 rounded-lg" v-model="point.item" />
+                                <button class="w-10 py-2 rounded-lg text-zinc-500 hover:text-zinc-800 shadow-inner bg-zinc-50" @click="removePoint(point)">
+                                    <Icon name="material-symbols:close" />
+                                </button>
+                            </div>
+                        </div>
+                        <div class="button-group flex items-center justify-center">
+                            <button class="w-full py-1.5 px-2 mt-2 text-xs rounded-lg text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50" @click="addPoint">+ Add Point</button>
+                        </div>
+
+                    </section>
               </div>
+
           </section>
 
           <!-- Other Details -->
@@ -129,7 +150,7 @@
               </div>
           </section>
 
-          <!-- Map Location and Walkthrough -->
+          <!-- Long Description -->
           <section class="mb-12 flex gap-6 md:flex-row flex-col pb-12">
               <div class="md:w-[30%]">
                   <h5 class="dark:text-gray-200">Long Description</h5>
@@ -216,58 +237,74 @@
 </template>
 
 <script setup>
-  import { useEditor, EditorContent, BubbleMenu } from '@tiptap/vue-3'
-  import StarterKit from '@tiptap/starter-kit'   
-  import Placeholder from '@tiptap/extension-placeholder'
-  import CharacterCount from '@tiptap/extension-character-count'
-  import Table from '@tiptap/extension-table'
-  import TableCell from '@tiptap/extension-table-cell'
-  import TableHeader from '@tiptap/extension-table-header'
-  import TableRow from '@tiptap/extension-table-row'
-  import Code from '@tiptap/extension-code'
-  import TextAlign from '@tiptap/extension-text-align'
-  import TextStyle from '@tiptap/extension-text-style'
-  import FontFamily from '@tiptap/extension-font-family'
-  import Youtube from '@tiptap/extension-youtube'
-  import Link from '@tiptap/extension-link'
-  import Image from '@tiptap/extension-image'
-  import Highlight from '@tiptap/extension-highlight'
-  import { Color } from '@tiptap/extension-color'
+    import { useEditor, EditorContent, BubbleMenu } from '@tiptap/vue-3'
+    import StarterKit from '@tiptap/starter-kit'   
+    import Placeholder from '@tiptap/extension-placeholder'
+    import CharacterCount from '@tiptap/extension-character-count'
+    import Table from '@tiptap/extension-table'
+    import TableCell from '@tiptap/extension-table-cell'
+    import TableHeader from '@tiptap/extension-table-header'
+    import TableRow from '@tiptap/extension-table-row'
+    import Code from '@tiptap/extension-code'
+    import TextAlign from '@tiptap/extension-text-align'
+    import TextStyle from '@tiptap/extension-text-style'
+    import FontFamily from '@tiptap/extension-font-family'
+    import Youtube from '@tiptap/extension-youtube'
+    import Link from '@tiptap/extension-link'
+    import Image from '@tiptap/extension-image'
+    import Highlight from '@tiptap/extension-highlight'
+    import { Color } from '@tiptap/extension-color'
 
-  import slug from 'slug';
-  import CustomImage from '@/extensions/custom-image'
-  
-  const user = useSupabaseUser()
-  const supabase = useSupabaseClient()
-  const toast = useToast()
-  const route = useRoute()
+    import slug from 'slug';
+    import CustomImage from '@/extensions/custom-image'
+    
+    const user = useSupabaseUser()
+    const supabase = useSupabaseClient()
+    const toast = useToast()
+    const route = useRoute()
 
-  definePageMeta({
-      colorMode: 'light',
-      middleware: 'auth',
-      layout: 'dashboard'
-  })
+    definePageMeta({
+        colorMode: 'light',
+        middleware: 'auth',
+        layout: 'dashboard'
+    })
 
-  const files = ref([])
-  const activeItem = ref(null)
-  const images = ref([])
+    const files = ref([])
+    const activeItem = ref(null)
+    const images = ref([])
+    const product = ref([])
 
-  const loading = ref(false)
+    const loading = ref(false)
 
-  const genSlug =  ref('')
+    const genSlug =  ref('')
 
-  let { data: product, error } = await supabase
-    .from('products')
-    .select(`
-      *, 
-      product_category(
-        id,
-        title
-      )
-    `)
-    .eq('slug', route.params.slug)
-    .single()  
-    images.value = product.images
+    const addPoint = () => {
+        product.value.points.push({
+            item: ""
+        })
+    }
+    const removePoint = (i) => {
+        product.value.points.splice(i, 1)
+    }
+
+    async function fetchProduct() {
+        let { data, error } = await supabase
+            .from('products')
+            .select(`
+            *, 
+            product_category(
+                id,
+                title
+            )
+            `)
+            .eq('slug', route.params.slug)
+            .single()  
+        
+            product.value = data
+            images.value = data.images
+            // pointsArr.value = data.points
+    }
+    fetchProduct()
 
   // Tiptap Editor
   const limit = ref(20000)
@@ -318,13 +355,13 @@
               },
           },
           onCreate({ editor }) {
-              editor.commands.setContent(product.long_description)
+              editor.commands.setContent(product.value.long_description)
               let output = editor.getHTML();
-              product.long_description = output
+              product.value.long_description = output
           },
           onUpdate: ({editor}) => {
               let output = editor.getHTML();
-              product.long_description = output
+              product.value.long_description = output
           }
       })
   )
@@ -341,20 +378,21 @@
           const { data, error } = await supabase
               .from('products')
               .update({
-                  title : product.title,
+                  title : product.value.title,
                   slug : genSlug.value,
-                  price : product.price,
-                  short_description : product.short_description,
-                  long_description : product.long_description,
-                  product_dimensions : product.product_dimensions,
-                  item_weight : product.item_weight,
-                  model_number : product.model_number,
-                  color : product.color,
-                  thumbnail : product.thumbnail,
+                  price : product.value.price,
+                  short_description : product.value.short_description,
+                  long_description : product.value.long_description,
+                  product_dimensions : product.value.product_dimensions,
+                  item_weight : product.value.item_weight,
+                  model_number : product.value.model_number,
+                  color : product.value.color,
+                  thumbnail : product.value.thumbnail,
                   images : images.value,
-                  category_id : product.product_category.id
+                  category_id : product.value.product_category.id,
+                  points: product.value.points,
               })
-              .eq('id', product.id)
+              .eq('id', product.value.id)
               .select()
 
           toast.add({ title: 'Product updated' });
@@ -367,7 +405,7 @@
   }
 
   const slugGenerator = () => {
-      const newSlug = slug(product.title)
+      const newSlug = slug(product.value.title)
       const res = Math.floor(Math.random() * Date.now()).toString(36).substring(2,5);
       genSlug.value = newSlug+'-'+res;
   }

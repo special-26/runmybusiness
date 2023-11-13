@@ -37,13 +37,39 @@
                     <h5 class="">Product Headings</h5>
                     <p class="text-sm text-gray-500 dark:text-gray-300">Title and Short description</p>
                 </div>
-                <div class="md:w-[70%] rounded-xl md:shadow flex-col flex gap-6 md:p-6 w-full">
-                    <div class="relative">
-                        <input placeholder="Project Title" class="w-full p-3 border focus:outline-gray-700 rounded-xl" v-model="title" />
-                    </div>
-                    <div class="relative">
-                        <textarea rows="5" placeholder="Short Description" class="w-full p-3 border focus:outline-gray-700 rounded-xl" v-model="short_description"></textarea>
-                    </div>
+                <div class="md:w-[70%] rounded-xl md:shadow flex-col flex gap-6 w-full">
+                    <section class="p-6">
+                        <div class="relative">
+                            <label class="">Title</label>
+                            <input placeholder="Project Title" class="w-full p-3 border focus:outline-gray-700 rounded-xl" v-model="title" />
+                        </div>
+                        <div class="relative">
+                            <label class="">Description</label>
+                            <textarea rows="5" placeholder="Short Description" class="w-full p-3 border focus:outline-gray-700 rounded-xl" v-model="short_description"></textarea>
+                        </div>
+                    </section>
+                    <!-- Bullet Points -->
+                    <section class="w-full border-t p-6">
+                        <div class="relative">
+                            <div class="flex items-center justify-between w-full">
+                                <h3 class="flex items-center gap-1">
+                                    <Icon name="tdesign:bulletpoint" />
+                                    <label class="">Bullets Points</label>
+                                </h3>
+                                <button class="py-1.5 px-2 border text-xs rounded-lg text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50" @click="addPoint" v-if="points.length === 0">+ Add Point</button>
+                            </div>
+                            <div v-for="(point, index) in points" :key="index" class="mb-2 flex items-center gap-1 mt-4">
+                                <input placeholder="New Point" class="w-full px-3 py-2 border focus:outline-gray-700 rounded-lg" v-model="point.item" />
+                                <button class="w-10 py-2 rounded-lg text-zinc-500 hover:text-zinc-800 shadow-inner bg-zinc-50" @click="removePoint(index)">
+                                    <Icon name="material-symbols:close" />
+                                </button>
+                            </div>
+                        </div>
+                        <div class="button-group flex items-center justify-center">
+                            <button class="w-full py-1.5 px-2 mt-2 text-xs rounded-lg text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50" v-if="points.length > 0" @click="addPoint">+ Add Point</button>
+                        </div>
+
+                    </section>
                 </div>
             </section>
 
@@ -260,6 +286,17 @@
     const thumbnail =  ref('')
     const category =  ref()
 
+    const points = ref([])
+
+    const addPoint = () => {
+        points.value.push({
+            item: ""
+        })
+    }
+    const removePoint = (i) => {
+        points.value.splice(i, 1)
+    }
+
     // Tiptap Editor
     const limit = ref(20000)
     const word_count = ref()
@@ -331,6 +368,7 @@
                         title : title.value,
                         slug : genSlug.value,
                         price : price.value,
+                        points : points.value,
                         short_description : short_description.value,
                         long_description : long_description.value,
                         product_dimensions : product_dimensions.value,
@@ -340,6 +378,7 @@
                         thumbnail : thumbnail.value,
                         images : images.value,
                         category_id : category.value.id,
+                        user_id : user.value.id
                     },
                 ])
                 .select()
@@ -351,6 +390,7 @@
         } finally {
             title.value = '',
             price.value = '',
+            points.value = [],
             short_description.value = '',
             long_description.value = '',
             product_dimensions.value = '',
@@ -358,7 +398,7 @@
             model_number.value = '',
             color.value = '',
             thumbnail.value = '',
-            images.value = '',
+            images.value = [],
             category.value = ''
         }
     }
@@ -417,5 +457,10 @@
 <style scoped>
 .active{
     color: yellow;
+}
+label{
+    font-size: 14px;
+    color: #333;
+    font-weight: 600;
 }
 </style>

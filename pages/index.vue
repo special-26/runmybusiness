@@ -178,7 +178,7 @@
 <script setup>
     definePageMeta({
         colorMode: 'light',
-        layout: 'empty',
+        layout: 'default',
     })
     
     const activeTab = ref('tabOne')
