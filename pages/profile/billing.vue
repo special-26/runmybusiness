@@ -87,9 +87,21 @@
                             <div class="text-xs text-zinc-400 dark:text-zinc-800">{{ $dayjs(bill.bill_from).format('D MMM YY') }} - {{ $dayjs(bill.bill_to).format('D MMM YY') }}</div>
                         </div>
                         <div class="w-[20%] text-xs bg-red-50 border border-red-300 rounded-lg text-red-600 px-2 py-1 text-center">{{ bill.status }}</div>
-                        <a :href="bill.payment_link" target="_blank" class="text-xs md:text-sm w-[20%]">Pay now</a>
+                        <button @click="payModal = true" class="text-xs md:text-sm w-[20%]">Pay now</button>
                     </div>
                 </div>
+
+
+                <!-- Pay Now Modal -->
+                <UModal v-model="payModal">
+                    <div class="">
+                        <h4 class="p-3 text-center uppercase mb-4 border-b">Pay Now</h4>
+                        <figure class="flex justify-center">
+                            <img src="/qr-code.jpeg" alt="" class="w-72 h-72">
+                        </figure>
+                    </div>
+                </UModal>
+
             </div>
         </div>
       </section>
@@ -107,6 +119,8 @@
     const user = useSupabaseUser()
     const supabase = useSupabaseClient()
     const toast = useToast()
+
+    const payModal = ref(false)
 
     const plan_name = ref('')
     const billing_amount = ref('')
